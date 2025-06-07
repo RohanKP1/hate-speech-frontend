@@ -31,6 +31,8 @@ export default function HateSpeechAnalyzerApp() {
   const [redditResult, setRedditResult] = useState(null);
   const [redditNumComments, setRedditNumComments] = useState(1);
   const [toast, setToast] = useState("");
+  const [audioDragActive, setAudioDragActive] = useState(false);
+  const [imageDragActive, setImageDragActive] = useState(false);
 
   // --- Effects ---
   useEffect(() => {
@@ -273,11 +275,28 @@ export default function HateSpeechAnalyzerApp() {
                   className="hidden"
                   onChange={(e) => setAudioFile(e.target.files[0])}
                 />
-                <div className={`w-full p-6 rounded-xl border-2 border-dashed transition-all duration-200 ${
-                  audioFile 
-                    ? 'border-green-500 bg-green-900/20' 
-                    : 'border-red-400 bg-red-900/10 hover:bg-red-900/20 hover:border-red-300'
-                }`}>
+                <div
+                  className={`w-full p-6 rounded-xl border-2 border-dashed transition-all duration-200 ${
+                    audioFile
+                      ? 'border-green-500 bg-green-900/20'
+                      : 'border-red-400 bg-red-900/10 hover:bg-red-900/20 hover:border-red-300'
+                  }`}
+                  onDragOver={e => {
+                    e.preventDefault();
+                    setAudioDragActive(true);
+                  }}
+                  onDragLeave={e => {
+                    e.preventDefault();
+                    setAudioDragActive(false);
+                  }}
+                  onDrop={e => {
+                    e.preventDefault();
+                    setAudioDragActive(false);
+                    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                      setAudioFile(e.dataTransfer.files[0]);
+                    }
+                  }}
+                >
                   <div className="flex flex-col items-center text-center">
                     <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${
                       audioFile 
@@ -364,11 +383,28 @@ export default function HateSpeechAnalyzerApp() {
                   className="hidden"
                   onChange={(e) => setImageFile(e.target.files[0])}
                 />
-                <div className={`w-full p-6 rounded-xl border-2 border-dashed transition-all duration-200 ${
-                  imageFile
-                    ? 'border-green-500 bg-green-900/20'
-                    : 'border-emerald-700 bg-emerald-900/10 hover:bg-emerald-900/20 hover:border-emerald-600'
-                }`}>
+                <div
+                  className={`w-full p-6 rounded-xl border-2 border-dashed transition-all duration-200 ${
+                    imageFile
+                      ? 'border-green-500 bg-green-900/20'
+                      : 'border-emerald-700 bg-emerald-900/10 hover:bg-emerald-900/20 hover:border-emerald-600'
+                  }`}
+                  onDragOver={e => {
+                    e.preventDefault();
+                    setImageDragActive(true);
+                  }}
+                  onDragLeave={e => {
+                    e.preventDefault();
+                    setImageDragActive(false);
+                  }}
+                  onDrop={e => {
+                    e.preventDefault();
+                    setImageDragActive(false);
+                    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                      setImageFile(e.dataTransfer.files[0]);
+                    }
+                  }}
+                >
                   <div className="flex flex-col items-center text-center">
                     <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${
                       imageFile
