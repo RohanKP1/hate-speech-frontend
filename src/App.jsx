@@ -3,6 +3,8 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import ResultBox from "./components/ResultBox";
 import RedditResultBox from "./components/RedditResultBox";
 import Sidebar from "./components/Sidebar";
+import { formatJsonString } from "./utils/formatJsonString";
+import Toast from "./components/Toast";
 
 const API_BASE_URL = "http://localhost:8000";
 
@@ -28,6 +30,7 @@ export default function HateSpeechAnalyzerApp() {
   const [redditInput, setRedditInput] = useState("");
   const [redditResult, setRedditResult] = useState(null);
   const [redditNumComments, setRedditNumComments] = useState(1);
+  const [toast, setToast] = useState("");
 
   // --- Effects ---
   useEffect(() => {
@@ -573,15 +576,30 @@ export default function HateSpeechAnalyzerApp() {
                   >
                     &times;
                   </button>
-                  <h3 className="text-lg sm:text-xl font-bold mb-4 text-pink-400 flex items-center gap-2">
-                    <i className="fas fa-info-circle" /> Analysis Result
-                  </h3>
-                  <div className="overflow-auto max-h-[70vh]">
-                    <pre className="whitespace-pre-wrap break-words text-sm text-gray-200">
-                      {JSON.stringify(popupResult, null, 2)}
-                    </pre>
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg sm:text-xl font-bold text-pink-400 flex items-center gap-2">
+                      <i className="fas fa-info-circle" /> Analysis Result
+                    </h3>
+                    <button
+                      className="px-3 py-1.5 text-sm bg-gray-700 hover:bg-gray-600 text-white rounded-lg flex items-center gap-2 transition-colors"
+                      onClick={() => {
+                        navigator.clipboard.writeText(JSON.stringify(popupResult, null, 2));
+                        setToast("JSON copied to clipboard!");
+                      }}
+                    >
+                      <i className="fas fa-copy" /> Copy JSON
+                    </button>
+                  </div>
+                  <div className="overflow-auto max-h-[70vh] rounded-lg">
+                    <div
+                      className="font-mono text-sm leading-relaxed p-4 bg-black/20 rounded-lg overflow-x-auto whitespace-pre"
+                      dangerouslySetInnerHTML={{
+                        __html: formatJsonString(popupResult)
+                      }}
+                    />
                   </div>
                 </div>
+                <Toast message={toast} onClose={() => setToast("")} />
               </div>
             )}
           </section>
