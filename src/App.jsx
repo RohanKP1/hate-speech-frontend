@@ -10,9 +10,11 @@ export default function HateSpeechAnalyzerApp() {
   // --- State ---
   const [textInput, setTextInput] = useState("");
   const [audioFile, setAudioFile] = useState(null);
+  const [imageFile, setImageFile] = useState(null); // NEW
   const [textResult, setTextResult] = useState(null);
   const [audioResult, setAudioResult] = useState(null);
-  const [loading, setLoading] = useState({ text: false, audio: false });
+  const [imageResult, setImageResult] = useState(null); // NEW
+  const [loading, setLoading] = useState({ text: false, audio: false, image: false }); // add image
   const [history, setHistory] = useState(() => {
     try {
       const stored = localStorage.getItem("hs_history");
@@ -120,6 +122,37 @@ export default function HateSpeechAnalyzerApp() {
       setRedditResult({ error: err.message });
     } finally {
       setLoading((prev) => ({ ...prev, reddit: false }));
+    }
+  };
+
+  // NEW: Image analysis handler
+  const handleImageAnalyze = async () => {
+    if (!imageFile) {
+      setImageResult({ error: "Please select an image file to analyze." });
+      return;
+    }
+    setLoading((prev) => ({ ...prev, image: true }));
+    setImageResult(null);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", imageFile);
+      // Use the correct backend endpoint
+      const res = await fetch(`${API_BASE_URL}/image/analyze-image`, {
+        method: "POST",
+        body: formData
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setImageResult({ success: data });
+        addToHistory("Image Analysis", imageFile.name, data, "image");
+      } else {
+        setImageResult({ error: data.error || "Unknown error" });
+      }
+    } catch (err) {
+      setImageResult({ error: err.message });
+    } finally {
+      setLoading((prev) => ({ ...prev, image: false }));
     }
   };
 
@@ -314,6 +347,90 @@ export default function HateSpeechAnalyzerApp() {
           </section>
         )}
 
+        {activeTab === "image" && (
+          <section className="w-full max-w-4xl mt-6">
+            {/* Changed to dark green */}
+            <h2 className="text-2xl font-bold mb-5 flex items-center gap-2 text-emerald-400">
+              <i className="fas fa-image" /> Image Analysis
+            </h2>
+            <div className="mb-6">
+              <label className="block w-full cursor-pointer">
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => setImageFile(e.target.files[0])}
+                />
+                <div className={`w-full p-6 rounded-xl border-2 border-dashed transition-all duration-200 ${
+                  imageFile
+                    ? 'border-green-500 bg-green-900/20'
+                    : 'border-emerald-700 bg-emerald-900/10 hover:bg-emerald-900/20 hover:border-emerald-600'
+                }`}>
+                  <div className="flex flex-col items-center text-center">
+                    <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${
+                      imageFile
+                        ? 'bg-green-600 text-white'
+                        : 'bg-emerald-700 text-white'
+                    }`}>
+                      <i className={`fas ${imageFile ? 'fa-check' : 'fa-image'} text-2xl`} />
+                    </div>
+                    <div className={`font-semibold text-lg mb-2 ${
+                      imageFile ? 'text-green-400' : 'text-emerald-400'
+                    }`}>
+                      {imageFile ? 'Image File Selected' : 'Upload Image File'}
+                    </div>
+                    <div className="text-gray-300 text-sm mb-2">
+                      {imageFile ? imageFile.name : 'Click to browse or drag and drop'}
+                    </div>
+                    <div className="text-gray-500 text-xs">
+                      Supported formats: PNG, JPG, JPEG, GIF
+                    </div>
+                  </div>
+                </div>
+              </label>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4 mt-2 w-full">
+              <button
+                className={buttonBase + " bg-emerald-700 hover:bg-emerald-800 text-white w-full sm:w-auto cursor-pointer"}
+                onClick={handleImageAnalyze}
+                disabled={loading.image}
+              >
+                <i className="fas fa-search" /> Analyze
+              </button>
+            </div>
+            {loading.image && (
+              <div className="flex items-center gap-3 mt-4 px-4 py-3 bg-black/60 border border-emerald-700 rounded-xl shadow animate-pulse">
+                <span className="relative flex h-6 w-6">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-6 w-6 bg-emerald-700 flex items-center justify-center">
+                    <i className="fas fa-spinner fa-spin text-white text-base" />
+                  </span>
+                </span>
+                <span className="text-emerald-200 font-semibold text-base">
+                  Analyzing image, please wait...
+                </span>
+              </div>
+            )}
+            {/* Show extracted text if present */}
+            {imageResult?.success?.transcription && (
+              <div className="mb-6 mt-6">
+                <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-6">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center">
+                      <i className="fas fa-file-image text-emerald-300 text-lg" />
+                    </div>
+                    <h3 className="text-lg font-bold text-white">Extracted Text from Image</h3>
+                  </div>
+                  <div className="text-gray-200 text-base whitespace-pre-line break-words">
+                    {imageResult.success.transcription}
+                  </div>
+                </div>
+              </div>
+            )}
+            <ResultBox data={imageResult} />
+          </section>
+        )}
+
         {activeTab === "reddit" && (
           <section className="w-full max-w-4xl mt-6">
             <h2 className="text-2xl font-bold mb-5 flex items-center gap-2 text-orange-400">
@@ -352,7 +469,7 @@ export default function HateSpeechAnalyzerApp() {
                 disabled={loading.reddit}
                 type="button"
               >
-                <i className="fab fa-reddit" /> Analyze Reddit
+                <i className="fas fa-search" /> Analyze
               </button>
             </div>
             {loading.reddit && (
@@ -422,6 +539,8 @@ export default function HateSpeechAnalyzerApp() {
                               ? "bg-orange-900/80 text-orange-300"
                               : h.category === "text"
                               ? "bg-indigo-900/80 text-indigo-300"
+                              : h.category === "image"
+                              ? "bg-emerald-900/80 text-emerald-300"
                               : "bg-pink-900/80 text-pink-300"
                           }`}>
                             {h.type}

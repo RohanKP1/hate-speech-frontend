@@ -12,7 +12,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
           className={`flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-all duration-200 cursor-pointer ${
             activeTab === "text"
               ? "bg-indigo-800 text-white shadow-lg ring-2 ring-indigo-400"
-              : "hover:bg-[#23232b] text-gray-300"
+              : "hover:bg-indigo-900 hover:text-indigo-300 text-gray-300"
           }`}
           onClick={() => setActiveTab("text")}
         >
@@ -22,7 +22,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
           className={`flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-all duration-200 cursor-pointer ${
             activeTab === "audio"
               ? "bg-red-800 text-white shadow-lg ring-2 ring-red-400"
-              : "hover:bg-[#23232b] text-gray-300"
+              : "hover:bg-red-900 hover:text-red-300 text-gray-300"
           }`}
           onClick={() => setActiveTab("audio")}
         >
@@ -30,9 +30,19 @@ export default function Sidebar({ activeTab, setActiveTab }) {
         </button>
         <button
           className={`flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-all duration-200 cursor-pointer ${
+            activeTab === "image"
+              ? "bg-emerald-800 text-white shadow-lg ring-2 ring-emerald-400"
+              : "hover:bg-emerald-900 hover:text-emerald-300 text-gray-300"
+          }`}
+          onClick={() => setActiveTab("image")}
+        >
+          <i className="fas fa-image" /> Image Analysis
+        </button>
+        <button
+          className={`flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-all duration-200 cursor-pointer ${
             activeTab === "reddit"
               ? "bg-orange-700 text-white shadow-lg ring-2 ring-orange-400"
-              : "hover:bg-[#23232b] text-gray-300"
+              : "hover:bg-orange-900 hover:text-orange-300 text-gray-300"
           }`}
           onClick={() => setActiveTab("reddit")}
         >
@@ -42,7 +52,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
           className={`flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-all duration-200 cursor-pointer ${
             activeTab === "history"
               ? "bg-pink-800 text-white shadow-lg ring-2 ring-pink-400"
-              : "hover:bg-[#23232b] text-gray-300"
+              : "hover:bg-pink-900 hover:text-pink-300 text-gray-300"
           }`}
           onClick={() => setActiveTab("history")}
         >
