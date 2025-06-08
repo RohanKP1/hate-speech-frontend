@@ -53,8 +53,8 @@ export default function ResultBox({ data }) {
           {/* Validation Agent */}
           <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-6 flex flex-col">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center">
-                <i className="fas fa-user-shield text-indigo-300 text-sm" />
+              <div className="w-8 h-8 bg-gradient-to-br from-indigo-400 via-indigo-600 to-purple-600 rounded-lg flex items-center justify-center">
+                <i className="fas fa-user-shield text-white text-sm" />
               </div>
               <h3 className="text-lg font-bold text-white">Validation Agent</h3>
             </div>

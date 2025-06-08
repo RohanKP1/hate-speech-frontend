@@ -213,9 +213,13 @@ export default function HateSpeechAnalyzerApp() {
 
   // --- Render ---
   return (
-    <div className="min-h-screen bg-[#18181a] text-white flex">
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-      <main className="flex-1 flex flex-col items-center justify-start px-2 sm:px-6 md:px-12 py-10">
+    <div className="min-h-screen bg-[#18181a] text-white">
+      {/* Fixed Sidebar */}
+      <div className="fixed top-0 left-0 h-full z-40">
+        <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      </div>
+      {/* Main Content */}
+      <main className="ml-72 flex flex-col items-center justify-start px-2 sm:px-6 md:px-12 py-10 min-h-screen">
         {activeTab === "text" && (
           <section className="w-full max-w-4xl mt-6">
             <h2 className="text-2xl font-bold mb-5 flex items-center gap-2 text-indigo-400">
@@ -617,7 +621,7 @@ export default function HateSpeechAnalyzerApp() {
                       <i className="fas fa-info-circle" /> Analysis Result
                     </h3>
                     <button
-                      className="px-3 py-1.5 text-sm bg-gray-700 hover:bg-gray-600 text-white rounded-lg flex items-center gap-2 transition-colors"
+                      className="px-3 py-1.5 text-sm bg-gray-700 hover:bg-gray-600 text-white rounded-lg flex items-center gap-2 transition-colors cursor-pointer"
                       onClick={() => {
                         navigator.clipboard.writeText(JSON.stringify(popupResult, null, 2));
                         setToast("JSON copied to clipboard!");
